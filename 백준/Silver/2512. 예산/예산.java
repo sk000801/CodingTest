@@ -1,59 +1,48 @@
-import java.util.*;
+import java.io.*;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main {
-    static int[] money;
-    static int budget;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-    public static long check(int mid) {
+        int n = Integer.parseInt(br.readLine());
+
+        int[] cost = new int[n];
         long sum = 0;
-
-        for(int i = 0; i < money.length; i++) {
-            if(money[i] > mid) sum += mid;
-            else sum += money[i];
-        }
-
-        return sum;
-    }
-
-    public static int action(int start, int fin) {
-        int answer = 0;
-        
-        while(start <= fin) {
-            int mid = (start+fin)/2;
-
-            long sum = check(mid);
-
-            if(sum <= budget) {
-                start = mid+1;
-                answer = mid;
-            } else {
-                fin = mid-1;
-            }
-        }
-
-        return answer;
-    }
-
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
-
-        int n = in.nextInt();
-        money = new int[n];
-
-        int entire = 0;
+        StringTokenizer st = new StringTokenizer(br.readLine());
         for(int i = 0; i < n; i++) {
-            money[i] = in.nextInt();
-            entire += money[i];
+            cost[i] = Integer.parseInt(st.nextToken());
+            sum += cost[i];
         }
-        Arrays.sort(money);
+        
+        Arrays.sort(cost);
 
-        budget = in.nextInt();
-
-        if(entire <= budget) {
-            System.out.println(money[money.length-1]);
+        int limit = Integer.parseInt(br.readLine());
+        if(sum <= limit) {
+            System.out.println(cost[n-1]);
             return;
         }
 
-        System.out.println(action(0, money[money.length-1]));
+        int start = 0;
+        int fin = cost[n-1];
+        int ans = 0;
+
+        while(start <= fin) {
+            int mid = (start+fin)/2;
+
+            long temp = 0;
+            for(int i = 0; i < n; i++) {
+                if(mid < cost[i]) temp += mid;
+                else temp += cost[i];
+            }
+
+            if(temp <= limit) {
+                start = mid+1;
+                ans = Math.max(ans, mid);
+            } else fin = mid-1;
+        }
+
+        System.out.println(ans);
     }
 }
