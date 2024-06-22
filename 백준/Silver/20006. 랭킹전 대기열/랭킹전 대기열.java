@@ -1,68 +1,64 @@
+import java.io.*;
 import java.util.*;
 
 public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-    public static class Player implements Comparable<Player> {
-        int level;
-        String name;
-        boolean flag;
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        Player(int level, String name) {
-            this.level = level;
-            this.name = name;
+        int p = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+
+        Map<String, Integer> player = new LinkedHashMap<>();
+
+        for(int i = 0; i < p; i++) {
+            st = new StringTokenizer(br.readLine());
+
+            int l = Integer.parseInt(st.nextToken());
+            String name = st.nextToken();
+
+            player.put(name, l);
         }
 
-        @Override
-        public int compareTo(Player p1) {
-            return name.compareTo(p1.name);
-        }
-    }
+        List<String> names = new ArrayList<>(player.keySet());
 
-    public static void main(String[] args) throws Exception {
-        Scanner in = new Scanner(System.in);
+        boolean[] visited = new boolean[p+1];
+
         StringBuffer sb = new StringBuffer();
 
-        String[] s = in.nextLine().split(" ");
-        int p = Integer.parseInt(s[0]);   
-        int m = Integer.parseInt(s[1]);  
-        Player[] players = new Player[p];
+        for(int i = 0; i < p; i++) {
+            String name1 = names.get(i);
+            int level1 = player.get(name1);
+            
+            if(visited[i]) continue;
+            
+            List<String> list = new ArrayList<>();
+            for(int j = i; j < p; j++) {
+                if(list.size() == m) break;
 
-        for (int i = 0; i < p; i++) {
-            s = in.nextLine().split(" ");
-            int level = Integer.parseInt(s[0]);
-            String name = s[1];
-            players[i] = new Player(level, name);
-        }
+                String name = names.get(j);
+                int level = player.get(name);
 
-        for (int i = 0; i < p; i++) {
-            ArrayList<Player> list = new ArrayList<>();
-            if (!players[i].flag) {
-                for (int j = i; j < p; j++) {
-                    if (list.size() == m) {
-                        break;
-                    }
-                    int level = players[j].level;
-                    String name = players[j].name;
-                    if (!players[j].flag && players[i].level - 10 <= level && players[i].level + 10 >= level) {
-                        players[j].flag = true;
-                        list.add(new Player(level, name));
-                    }
-                }
-
-                Collections.sort(list);
-                if (list.size() == m) {
-                    sb.append("Started!").append("\n");
-                } else {
-                    sb.append("Waiting!").append("\n");
-                }
-
-                for (int r = 0; r < list.size(); r++) {
-                    Player player = list.get(r);
-                    sb.append(player.level).append(" ").append(player.name).append("\n");
+                if(!visited[j] && level1 - 10 <= level && level1 + 10 >= level) {
+                    visited[j] = true;
+                    list.add(name);
                 }
             }
 
+            Collections.sort(list);
+
+            if(list.size() == m) {
+                sb.append("Started!").append("\n");
+            } else {
+                sb.append("Waiting!").append("\n");
+            }
+
+            for(String s : list) {
+                sb.append(player.get(s)).append(" ").append(s).append("\n");
+            }
         }
+
         System.out.println(sb);
     }
 }
