@@ -1,24 +1,24 @@
+import java.io.*;
 import java.util.*;
 
-// 그냥 모든 수를 담아서 비교하면 안됨...?
 public class Main {
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        Queue<Long> q = new PriorityQueue<>(Collections.reverseOrder());
+        int n = Integer.parseInt(br.readLine());
 
-        int n = in.nextInt();
+        List<Integer> list = new ArrayList<>();
 
+        StringTokenizer st;
         for(int i = 0; i < n; i++) {
-            for(int j = 0; j < n; j++) {
-                q.add(in.nextLong());
+            st = new StringTokenizer(br.readLine());
+            for(int j = 0; j < n; j++) {    
+                list.add(Integer.parseInt(st.nextToken()));
             }
         }
 
-        for(int i = 0; i < n-1; i++) {
-            q.poll();
-        }
+        Collections.sort(list, Collections.reverseOrder());
 
-        System.out.println(q.peek());
+        System.out.println(list.get(n-1));
     }
 }
