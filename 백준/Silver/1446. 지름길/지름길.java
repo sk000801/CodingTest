@@ -1,47 +1,48 @@
+import java.io.*;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int n = in.nextInt();
-        int d = in.nextInt();
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int d = Integer.parseInt(st.nextToken());
 
-        //just 입력값 받아오는
-        int[][] road = new int[n][3];
-        //해당 위치?만큼 이동하는데 걸리는 최단거리
-        int[] distance = new int[d+1];
-        Arrays.fill(distance, Integer.MAX_VALUE);
+        int[] dist = new int[10001];
+        Arrays.fill(dist, Integer.MAX_VALUE);
 
-        //just 입력된 최단거리값 저장
-        List<List<int[]>> path = new ArrayList<>();
-        for(int i = 0; i <= 10_000; i++) {
-            path.add(new ArrayList<>());
+        List<List<int[]>> list = new ArrayList<>();
+        for(int i = 0; i <= 10000; i++) {
+            list.add(new ArrayList<>());
         }
 
         for(int i = 0; i < n; i++) {
-            road[i][0] = in.nextInt();
-            road[i][1] = in.nextInt();
-            road[i][2] = in.nextInt();
+            st = new StringTokenizer(br.readLine());
+            int start = Integer.parseInt(st.nextToken());
+            int fin = Integer.parseInt(st.nextToken());
+            int len = Integer.parseInt(st.nextToken());
 
-            if(road[i][1]-road[i][0] > road[i][2]) {
-                path.get(road[i][1]).add(new int[]{road[i][0], road[i][2]});
-            }
+            // 지름길을 가는게 더 이득일 때
+            if(fin-start > len) list.get(fin).add(new int[]{start, len});
         }
-        
-        distance[0] = 0;
+
+        dist[0] = 0;
+
         for(int i = 1; i <= d; i++) {
-            if(path.get(i).size() > 0) {
-                for(int[] arr : path.get(i)) {
-                    if(distance[arr[0]]+arr[1] > distance[i]) continue;
-                    distance[i] = Math.min(distance[i-1]+1, distance[arr[0]]+arr[1]);
+            if(list.get(i).size() > 0) {
+                // 지름길이 있다면 지름길을 거치는 경우만 고려
+                for(int j = 0; j < list.get(i).size(); j++) {
+                    int[] next = list.get(i).get(j);
+
+                    if(dist[next[0]]+next[1] > dist[i]) continue;
+                    dist[i] = Math.min(dist[i-1]+1, dist[next[0]]+next[1]);
                 }
                 continue;
             }
-
-            distance[i] = distance[i-1]+1;
+            dist[i] = dist[i-1]+1;
         }
 
-        System.out.println(distance[d]);
+        System.out.println(dist[d]);
     }
 }
