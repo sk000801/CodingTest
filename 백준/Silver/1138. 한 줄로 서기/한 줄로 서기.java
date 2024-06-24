@@ -1,33 +1,26 @@
+import java.io.*;
 import java.util.*;
 
-//쉬울 줄 알았는데..
+// 키가 큰 순으로 입력받은대로 리스트에 삽입!!
 public class Main {
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int n = in.nextInt();
-        int[] taller = new int[n];
+        int n = Integer.parseInt(br.readLine());
+
+        int[] people = new int[n];
+        StringTokenizer st = new StringTokenizer(br.readLine());
         for(int i = 0; i < n; i++) {
-            taller[i] = in.nextInt();
+            people[i] = Integer.parseInt(st.nextToken());
         }
 
-        int[] seat = new int[n];
-        for(int i = 0; i < n; i++) {
-            //count가 왼쪽 자리에 있는 큰 사람의 빈자리수
-            int count = 0;
-            for(int j = 0; j < n; j++) {
-                //seat[j]가 0인 것은 이미 앉은 자리가 아닌지 확인하려고
-                if(count == taller[i] && seat[j] == 0) {
-                    seat[j] = i+1;
-                    break;
-                }
-                //빈자리면 count값 올려줌
-                if(seat[j] == 0) count++;
-            }
+        List<Integer> order = new ArrayList<>();
+        for(int i = n-1; i >= 0; i--) {
+            order.add(people[i], i+1);
         }
 
-        for(int i = 0; i < n; i++) {
-            System.out.print(seat[i]+" ");
+        for(int i = 0; i < order.size(); i++) {
+            System.out.print(order.get(i)+" ");
         }
     }
 }
