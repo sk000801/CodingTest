@@ -1,9 +1,8 @@
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
-//map 쓰고 싶어서 map 썼는데 자꾸 에러 난다 (getOrDefault 처리 했는디)
-//그리고 배열 처리 했는데 시간초과 도대체 왜 나는거니;;
-//설마 스캐너 땜시롱?
+// 투 포인터 개념
+// 내 풀이 참고
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -12,27 +11,28 @@ public class Main {
 
         int n = Integer.parseInt(st.nextToken());
         int k = Integer.parseInt(st.nextToken());
-        int[] nums = new int[n];
+
+        int[] num = new int[n];
         int[] count = new int[100_001];
         st = new StringTokenizer(br.readLine());
         for(int i = 0; i < n; i++) {
-            nums[i] = Integer.parseInt(st.nextToken());
+            num[i] = Integer.parseInt(st.nextToken());
         }
 
         int start = 0;
-        int end = 0;
-        int max = 0;
-        while(end < n) {
-            while(end < n && count[nums[end]]+1 <= k) {
-                count[nums[end]]++;
-                end++;
+        int fin = 0;
+        int answer = 0;
+        while(fin < n) {
+            while(fin < n && count[num[fin]]+1 <= k) {
+                count[num[fin]]++;
+                fin++;
             }
 
-            max = Math.max(max, end-start);
-            count[nums[start]]--;
+            answer = Math.max(answer, fin-start);
+            count[num[start]]--;
             start++;
         }
 
-        System.out.println(max);
+        System.out.println(answer);
     }
 }
