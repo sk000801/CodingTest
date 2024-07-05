@@ -1,61 +1,74 @@
+import java.io.*;
 import java.util.*;
 
 public class Main {
-    public static class Node implements Comparable<Node> {
-        int pos, val;
-        public Node(int pos, int val) {
-            this.pos = pos;
-            this.val = val;
+    static int n, m;
+    static List<List<Cow>> list = new ArrayList<>();
+    static int[] dist;
+    static boolean[] visited;
+
+    public static class Cow implements Comparable<Cow> {
+        int node;
+        int count;
+
+        public Cow(int node, int count) {
+            this.node = node;
+            this.count = count;
         }
+
         @Override
-        public int compareTo(Node n) {
-            return this.val-n.val;
+        public int compareTo(Cow c) {
+            return this.count-c.count;
         }
     }
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
 
-        int n = in.nextInt();
-        int m = in.nextInt();
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        List<List<Node>> list = new ArrayList<>();
-        int[] dist = new int[n+1];
-        boolean[] visited = new boolean[n+1];
+        n = Integer.parseInt(st.nextToken());
+        m = Integer.parseInt(st.nextToken());
+
+        dist = new int[n+1];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+
+        visited = new boolean[n+1];
+
+        dist[1] = 0;
 
         for(int i = 0; i <= n; i++) {
             list.add(new ArrayList<>());
         }
 
         for(int i = 0; i < m; i++) {
-            int a = in.nextInt();
-            int b = in.nextInt();
-            int c = in.nextInt();
+            st = new StringTokenizer(br.readLine());
 
-            list.get(a).add(new Node(b, c));
-            list.get(b).add(new Node(a, c));
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+
+            list.get(a).add(new Cow(b, c));
+            list.get(b).add(new Cow(a, c));
         }
-        Arrays.fill(dist,5000_0001);
-        dist[1] = 0;
 
-        PriorityQueue<Node> pq = new PriorityQueue<>();
-        pq.add(new Node(1, 0));
+        PriorityQueue<Cow> pq = new PriorityQueue<>();
+        pq.add(new Cow(1, 0));
 
         while(!pq.isEmpty()) {
-            Node cur = pq.poll();
+            Cow cur = pq.poll();
 
-            if(visited[cur.pos]) continue;
-            visited[cur.pos] = true;
+            if(visited[cur.node]) continue;
+            visited[cur.node] = true;
 
-            for(int i = 0; i < list.get(cur.pos).size(); i++) {
-                Node next = list.get(cur.pos).get(i);
+            for(int i = 0; i < list.get(cur.node).size(); i++) {
+                Cow next = list.get(cur.node).get(i);
 
-                if(dist[next.pos] > dist[cur.pos] + next.val) {
-                    dist[next.pos] = dist[cur.pos]+next.val;
-                    pq.add(new Node(next.pos, dist[next.pos]));
-                }
+                dist[next.node] = Math.min(dist[next.node], dist[cur.node]+next.count);
+                pq.add(new Cow(next.node, dist[next.node]));
             }
         }
 
         System.out.println(dist[n]);
-    }
+    }   
 }
