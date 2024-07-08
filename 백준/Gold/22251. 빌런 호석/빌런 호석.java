@@ -1,62 +1,62 @@
 import java.util.*;
-import java.io.*;
 
-// n층 k자리수(엘베층수) 최소1/최대p개 반전 x층에 멈춰있음
 public class Main {
-    static int[][] digit = {{1, 1, 0, 1, 1, 1, 1}, 
-    {0, 1, 0, 0, 0, 0, 1}, 
-    {1, 1, 1, 0, 1, 1, 0}, 
-    {1, 1, 1, 0, 0, 1, 1}, 
-    {0, 1, 1, 1, 0, 0, 1}, 
-    {1, 0, 1, 1, 0, 1, 1}, 
-    {1, 0, 1, 1, 1, 1, 1}, 
-    {1, 1, 0, 0, 0, 0, 1}, 
-    {1, 1, 1, 1, 1, 1, 1},
-    {1, 1, 1, 1, 0, 1, 1}};
-    
-    public static boolean isChange(int target, int[] num, int k, int p) {
-        int[] targetArr = new int[k];
-        for(int i = 0; i < k; i++) {
-            targetArr[i] = target % 10;
-            target /= 10;
+    static int n, k, p, x;
+    static int[] num;
+    static int[][] digit = new int[][]{
+        {1, 1, 1, 1, 1, 1, 0},
+        {0, 0, 0, 0, 1, 1, 0},
+        {1, 0, 1, 1, 0, 1, 1},
+        {1, 0, 0, 1, 1, 1, 1},
+        {0, 1, 0, 0, 1, 1, 1},
+        {1, 1, 0, 1, 1, 0, 1},
+        {1, 1, 1, 1, 1, 0, 1},
+        {1, 0, 0, 0, 1, 1, 0},
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 0, 1, 1, 1, 1}
+    };
+
+    public static boolean reverse(int target) {
+        int[] temp = new int[k];
+        int ori = target;
+        for(int i = k-1; i >= 0; i--) {
+            temp[i] = ori%10;
+            ori /= 10;
         }
 
         int count = 0;
-
         for(int i = 0; i < k; i++) {
             for(int j = 0; j < 7; j++) {
-                if(digit[num[i]][j] != digit[targetArr[i]][j]) {
+                if(digit[num[i]][j] != digit[temp[i]][j]) {
                     count++;
+                    if(count > p) return false;
                 }
-                if(count > p) return false;
             }
         }
 
         return true;
     }
-    
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+
+        n = in.nextInt();
+        k = in.nextInt();
+        p = in.nextInt();
+        x = in.nextInt();
         
-        int n = Integer.parseInt(st.nextToken());
-        int k = Integer.parseInt(st.nextToken());
-        int p = Integer.parseInt(st.nextToken());
-        int x = Integer.parseInt(st.nextToken());
+        num = new int[k];
+        int ori = x;
+        for(int i = k-1; i >= 0; i--) {
+            num[i] = ori%10;
+            ori /= 10;
+        }
 
         int answer = 0;
 
-        int[] num = new int[k];
-        int originalX = x;
-        for(int i = 0; i < k; i++) {
-            num[i] = x%10;
-            x /= 10;
-        }
-
         for(int i = 1; i <= n; i++) {
-            if(i == originalX) continue;
-            if(isChange(i, num, k, p)) answer++;
+            if(i == x) continue;
+            if(reverse(i)) answer++;
         }
 
         System.out.println(answer);
