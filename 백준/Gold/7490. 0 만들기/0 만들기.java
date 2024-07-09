@@ -1,62 +1,71 @@
 import java.util.*;
 
-//1~n까지의 수 사이의 +, -, "" (이어붙이기)로 결과가 0이 되게 만들기
 public class Main {
-    static String[] hubo = {"","+","-"};
-    static StringBuffer sb = new StringBuffer();
+    static String[] yeonsan = new String[]{"", "+", "-"};
+    static StringBuffer sb;
 
-    public static int calculate(String[] cur, int n) {
+    public static int cal(String[] temp) {
+        int num = 0;
         String s = "";
-        for(int i = 0; i < n-1; i++) {
-            s += (i+1)+cur[i];
+
+        for(int i = 0; i < temp.length; i++) {
+            s += (i+1)+temp[i];
         }
-        s += n;
+        s += String.valueOf(temp.length+1);
 
-        String[] num = s.replace("+", " ").replace("-", " ").split(" ");
+        s = s.replaceAll(" ", "");
 
-        int res = Integer.parseInt(num[0]);
+        // 여기가 왜 그냥 공백을 줄이는거 빼고는 안되는지
+        //String[] nums = s.replace("+", " ").replace("-", " ").split(" ");
+
+        String[] nums = s.split("[\\-\\+]");
+
+        num += Integer.parseInt(nums[0]);
         int idx = 1;
-        for(int i = 0; i < cur.length; i++) {
-            if(cur[i].equals("+")) {
-                res += Integer.parseInt(num[idx++]);
+        for(int i = 0; i < temp.length; i++) {
+            if(temp[i].equals("+")) {
+                num += Integer.parseInt(nums[idx++]);
             } 
-            if(cur[i].equals("-")) {
-                res -= Integer.parseInt(num[idx++]);
-            }
+
+            if(temp[i].equals("-")) {
+                num -= Integer.parseInt(nums[idx++]);
+            }            
         }
 
-        return res;
+        return num;
     }
 
-    public static void dfs(int depth, int n, String[] cur) {
-        if(depth == n-1) {
-            int num = calculate(cur, n);
-            if(num == 0) {
-                for(int i = 0; i < n-1; i++) {
-                    if(cur[i].equals("")) sb.append((i+1)+" ");
-                    else sb.append((i+1)+cur[i]);
+    public static void dfs(int depth, int num, String[] temp) {
+        if(depth == num-1) {
+            int res = cal(temp);
+            if(res == 0) {
+                for(int i = 0; i < num-1; i++) {
+                    if(temp[i].equals("")) temp[i] = " ";
+                    sb.append((i+1)).append(temp[i]);
                 }
-                sb.append(n);
+                sb.append(num);
                 sb.append("\n");
             }
             return;
         }
 
         for(int i = 0; i < 3; i++) {
-            cur[depth] = hubo[i];
-            dfs(depth+1, n, cur);
+            temp[depth] = yeonsan[i];
+            dfs(depth+1, num, temp);
         }
     }
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
+        sb = new StringBuffer();
+
         int tc = in.nextInt();
         for(int i = 0; i < tc; i++) {
             int n = in.nextInt();
-            
-            String[] cur = new String[n-1];
-            dfs(0, n, cur);
+
+            String[] temp = new String[n-1];
+            dfs(0, n, temp);
 
             sb.append("\n");
         }
