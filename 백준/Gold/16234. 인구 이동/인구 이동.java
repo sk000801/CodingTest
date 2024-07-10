@@ -1,91 +1,89 @@
 import java.io.*;
 import java.util.*;
 
-// 현재 노드와 이동할 노드의 값 차이가 l이상 r이하인 노드만 이동하도록 함
-// 방문한 노드들을 차례대로 리스트에 넣어줌 or boolean형 배열로
-// 노드들의 방문이 끝났다면 인구 이동을 실시한다
-
 public class Main {
-    static int n;
-    static int l,r;
-    static int[][] world;
+    static int n, l, r;
+    static int[][] map;
     static boolean[][] visited;
-    static List<int[]> list;
+    static boolean check = false;
     static int[] dx = {-1,0,1,0};
     static int[] dy = {0,-1,0,1};
 
-    public static int bfs(int x, int y) {
+    public static void bfs(int[] land) {
         Queue<int[]> q = new LinkedList<>();
-        list = new ArrayList<>();
+        List<int[]> list = new ArrayList<>();
+        int hap = 0;
+        
+        q.add(new int[]{land[0], land[1]});
 
-        q.add(new int[]{x, y});
-        list.add(new int[]{x,y});
-        visited[x][y] = true;
-
-        int sum = world[x][y];
         while(!q.isEmpty()) {
-            int[] jap = q.poll();
+            int[] cur = q.poll();
+
+            if(visited[cur[0]][cur[1]]) continue;
+
+            visited[cur[0]][cur[1]] = true;
+            hap += map[cur[0]][cur[1]];
+            list.add(new int[]{cur[0], cur[1]});
 
             for(int i = 0; i < 4; i++) {
-                int nx = jap[0]+dx[i];
-                int ny = jap[1]+dy[i];
+                int nx = cur[0]+dx[i];
+                int ny = cur[1]+dy[i];
 
-                if(nx<0||nx>=n||ny<0||ny>=n) continue;
-                if(!visited[nx][ny]) {
-                    int chai = Math.abs(world[jap[0]][jap[1]]-world[nx][ny]);
-                    if(chai>=l && chai<=r) {
-                        q.add(new int[]{nx, ny});
-                        list.add(new int[]{nx, ny});
-                        sum += world[nx][ny];
-                        visited[nx][ny] = true;
-                    }
+                if(nx<0||nx>=n||ny<0||ny>=n||visited[nx][ny]) continue;
+                int diff = Math.abs(map[nx][ny]-map[cur[0]][cur[1]]);
+                if(diff >= l && diff <= r) {
+                    q.add(new int[]{nx, ny});
                 }
             }
         }
 
-        return sum;
-    }
+        if(list.size() <= 1) return;
+
+        int value = hap/list.size();
+
+        for(int i = 0; i < list.size(); i++) {
+            int[] temp = list.get(i);
+
+            map[temp[0]][temp[1]] = value;
+        }
+
+        check = true;
+    }  
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        String[] s = br.readLine().split(" ");
-        n = Integer.parseInt(s[0]);
-        l = Integer.parseInt(s[1]);
-        r = Integer.parseInt(s[2]);
-        world = new int[n][n];
-        visited = new boolean[n][n];
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        n = Integer.parseInt(st.nextToken());
+        l = Integer.parseInt(st.nextToken());
+        r = Integer.parseInt(st.nextToken());
+
+        map = new int[n][n];
 
         for(int i = 0; i < n; i++) {
-            s = br.readLine().split(" ");
+            st = new StringTokenizer(br.readLine());
             for(int j = 0; j < n; j++) {
-                world[i][j] = Integer.parseInt(s[j]);
-            }
+                map[i][j] = Integer.parseInt(st.nextToken());
+            }   
         }
 
-        int result = 0;
-        boolean escape = true;
-
-        while(escape) {
-            escape = false;
+        int answer = 0;
+        while(true) {
             visited = new boolean[n][n];
+            check = false;
+
             for(int i = 0; i < n; i++) {
                 for(int j = 0; j < n; j++) {
-                    if(!visited[i][j]) {
-                        int sum = bfs(i, j);
-                        if(list.size()>1) {
-                            sum /= list.size();
-                            for(int p = 0; p < list.size(); p++) {
-                                world[list.get(p)[0]][list.get(p)[1]] = sum;
-                                escape = true;
-                            }
-                        }
-                    }
+                    if(!visited[i][j]) bfs(new int[]{i, j});
                 }
             }
-            result++;
-        }
 
-        System.out.println(result-1);
+            if(!check) break;
+
+            answer++;
+        }   
+
+        System.out.println(answer);
     }
 }
