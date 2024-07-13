@@ -1,42 +1,45 @@
+import java.io.*;
 import java.util.*;
 
 public class Main {
+    static StringBuffer sb;
     static int[] dx = {-1,0,1,0};
     static int[] dy = {0,-1,0,1};
+    static int idx = 1;
 
-    public static class Node implements Comparable<Node> {
-        int x;
-        int y;
-        int value;
+    public static class Area implements Comparable<Area> {
+        int x, y, cost;
 
-        public Node(int x, int y, int value) {
+        public Area(int x, int y, int cost) {
             this.x = x;
             this.y = y;
-            this.value = value;
+            this.cost = cost;
         }
 
         @Override
-        public int compareTo(Node n) {
-            return this.value-n.value;
+        public int compareTo(Area a) {
+            return this.cost-a.cost;
         }
     }
 
-    public static int bfs(int[][] road) {
-        int n = road.length;
-        PriorityQueue<Node> q = new PriorityQueue<>();
-        q.add(new Node(0, 0, road[0][0]));
+    public static void bfs(int[][] arr) {
+        int n = arr.length;
 
-        int[][] map = new int[n][n];
+        PriorityQueue<Area> q = new PriorityQueue<>();
+        q.add(new Area(0, 0, arr[0][0]));
+
+        int[][] cost = new int[n][n];
         for(int i = 0; i < n; i++) {
-            Arrays.fill(map[i], Integer.MAX_VALUE);
+            Arrays.fill(cost[i], Integer.MAX_VALUE);
         }
-        map[0][0] = road[0][0];
+        cost[0][0] = arr[0][0];
 
         while(!q.isEmpty()) {
-            Node cur = q.poll();
+            Area cur = q.poll();
 
             if(cur.x == n-1 && cur.y == n-1) {
-                return cur.value;
+                sb.append("Problem ").append(idx++).append(": ").append(cur.cost).append("\n");
+                return;
             }
 
             for(int i = 0; i < 4; i++) {
@@ -44,34 +47,37 @@ public class Main {
                 int ny = cur.y+dy[i];
 
                 if(nx<0||ny<0||nx>=n||ny>=n) continue;
-                if(cur.value+road[nx][ny] < map[nx][ny]) {
-                    map[nx][ny] = cur.value+road[nx][ny];
-                    q.add(new Node(nx, ny, cur.value+road[nx][ny]));
-                }
+                if(cur.cost+arr[nx][ny] < cost[nx][ny]) {
+                    cost[nx][ny] = cur.cost+arr[nx][ny];
+                    q.add(new Area(nx, ny, cost[nx][ny]));
+                } 
             }
         }
-
-        return 0;
     }
 
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int idx = 1;
-        while(in.hasNextInt()) {
-            int n = in.nextInt();
+        sb = new StringBuffer();
+        StringTokenizer st;
+
+        while (true) { 
+            int n = Integer.parseInt(br.readLine());
+
             if(n == 0) break;
-            int[][] road = new int[n][n];
+
+            int[][] arr = new int[n][n];
 
             for(int i = 0; i < n; i++) {
+                st = new StringTokenizer(br.readLine());
                 for(int j = 0; j < n; j++) {
-                    road[i][j] = in.nextInt();
+                    arr[i][j] = Integer.parseInt(st.nextToken());
                 }
             }
 
-            System.out.println("Problem "+idx+": "+bfs(road));
-            idx++;
+            bfs(arr);
         }
 
+        System.out.println(sb);
     }
 }
