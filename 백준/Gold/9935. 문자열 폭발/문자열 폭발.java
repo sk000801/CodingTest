@@ -1,13 +1,14 @@
+import java.io.*;
 import java.util.*;
 
-//역시 시간 초과가 문제였고,, 자료구조 카테고리를 생각해야 하고,,
-//stack을 써야만 시간 초과를 막을 수 있는 듯
+// 당연히 replaceAll은 안될줄 알았음..
 public class Main {
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        String s = in.nextLine();
-        String burst = in.nextLine();
+        String s = br.readLine();
+        String burst = br.readLine();
+
         Stack<Character> stack = new Stack<>();
 
         for(int i = 0; i < s.length(); i++) {
@@ -15,6 +16,7 @@ public class Main {
 
             if(stack.size() >= burst.length()) {
                 boolean flag = true;
+
                 for(int j = 0; j < burst.length(); j++) {
                     if(stack.get(stack.size()-burst.length()+j) != burst.charAt(j)) {
                         flag = false;
@@ -31,10 +33,10 @@ public class Main {
         }
 
         StringBuffer sb = new StringBuffer();
-        for(char c : stack) {
-            sb.append(c);
+        while(!stack.isEmpty()) {
+            sb.append(stack.pop());
         }
 
-        System.out.println(sb.length() > 0 ? sb : "FRULA");
+        System.out.println(sb.toString().equals("") ? "FRULA" : sb.reverse().toString());
     }
 }
