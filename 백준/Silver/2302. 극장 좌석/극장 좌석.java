@@ -1,31 +1,40 @@
-import java.util.*;
+import java.io.*;
 
-// n = 1 : 1
-// n = 2 : 12 21
-// n = 3 : 123 132 213
-// 그냥 양 옆의 자리에 앉는 경우의 수 dp[n-1]+dp[n-2]
+// VIP의 고정 좌석을 고려하지 않으면, 이는 피보나치 수열
+// 피보나치 수열에서 vip 자리 제외 나머지 좌석 경우의 수 곱
+// 이건 못 풀어...ㅠㅠ
 public class Main {
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
+    static int n, m;
+    static int[] dp;
+    static int[] num;
 
-        int n = in.nextInt();
-        int[] dp = new int[41];
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        n = Integer.parseInt(br.readLine());
+        m = Integer.parseInt(br.readLine());
+        dp = new int[41];
+
         dp[0] = 1;
         dp[1] = 1;
-        for(int i = 2; i <= n; i++) {
+        dp[2] = 2;
+        for(int i = 3; i <= 40; i++) {
             dp[i] = dp[i-1]+dp[i-2];
         }
-        
-        int m = in.nextInt();
-        int num = 1;
-        int idx = 0;
-        for(int i = 0; i < m; i++) {
-            int cur = in.nextInt();
-            num *= dp[cur-idx-1];
-            idx = cur;
-        }
-        num *= dp[n-idx];
 
-        System.out.println(num);
+        int answer = 1;
+
+        int cur = 0;
+        for(int i = 0; i < m; i++) {
+            int vip = Integer.parseInt(br.readLine());
+            answer *= dp[vip-cur-1];
+            cur = vip;
+        }
+        // 마지막 VIP ~ 끝
+        answer *= dp[n-cur];
+
+        // cur => 0 -> 2 -> 4 -> 7
+
+        System.out.println(answer);
     }
 }
